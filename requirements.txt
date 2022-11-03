@@ -1,0 +1,16 @@
+docker-compose
+conda install -c conda-forge pydantic
+conda install -c conda-forge fastapi
+conda install -c conda-forge uvicorn
+conda install -c conda-forge dill
+
+
+publicar imagen airflow
+
+mkdir -p ./dags ./logs ./plugins ./data/raw_data ./data/processed_data ./models
+echo -e "AIRFLOW_UID=$(id -u)" > .env
+docker-compose up airflow-init
+
+
+docker build -t ridge-api .
+docker run -d -p 80:80 -v $PWD/models:/app/models -v $PWD/logs:/app/logs --name ridge-api-container ridge-api

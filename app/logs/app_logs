@@ -1,0 +1,44 @@
+2022-11-02 23:21:12.805 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-02 23:21:38.904 | INFO     | routes.model_check:check_model:18 - Data: [0.80391492 0.6027588  0.00581616 0.12118641 0.90800245 0.67735648
+ 0.09492996 0.70780778 0.7994658  0.80889321 0.48498435 0.49057243
+ 0.36612511 0.03301389 0.62595094 0.86681117 0.8518159  0.07426197
+ 0.58511454 0.33890722 0.39528449 0.55242362 0.0823235  0.01228085
+ 0.36177465 0.92027394 0.26833441 0.11056601 0.10449834 0.02391267
+ 0.7069386  0.37861819 0.96044066 0.81983668 0.77792835 0.93476465
+ 0.54622545 0.90211745 0.38960552 0.29477736 0.34373514 0.69896585
+ 0.11955037 0.84339358 0.47685046 0.35289778 0.02310035 0.18598109]
+2022-11-02 23:21:38.904 | INFO     | routes.model_check:check_model:19 - Model: <class 'module'>
+2022-11-02 23:22:11.882 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-02 23:22:21.569 | INFO     | routes.model_check:check_model:18 - Data: [[0.89645313 0.7984554  0.82402591 0.76644302 0.8870489  0.02521962
+  0.12199763 0.72234137 0.83683022 0.86278064 0.70664175 0.28324121
+  0.30694338 0.09902123 0.34799315 0.6761196  0.54928484 0.29829203
+  0.3016377  0.08294442 0.61451453 0.34445331 0.44539226 0.08402842
+  0.7091996  0.70696032 0.58659044 0.73737465 0.9841519  0.98247783
+  0.40080514 0.90672266 0.24139112 0.75541409 0.7066706  0.27688695
+  0.42855797 0.36748684 0.50281932 0.62817859 0.60908502 0.59270607
+  0.06251899 0.11311347 0.52880649 0.73687866 0.45223217 0.21148631]]
+2022-11-02 23:22:21.570 | INFO     | routes.model_check:check_model:19 - Model: <class 'module'>
+2022-11-02 23:22:21.572 | INFO     | routes.model_check:check_model:21 - Prediction: [[13561929.643440321]] [<class 'float'>]
+2022-11-03 02:23:15.702 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:15.824 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:15.953 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:16.289 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:16.574 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:16.598 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:16.675 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:16.683 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:16.743 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:16.831 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:16.909 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:17.026 | INFO     | app:load_model:19 - Model Loaded! : <class 'sklearn.model_selection._search.GridSearchCV'>
+2022-11-03 02:23:30.767 | INFO     | routes.model_check:check_model:17 - Check model
+2022-11-03 02:23:30.776 | INFO     | routes.model_check:check_model:19 - Data: [[0.3008036  0.84938752 0.84640504 0.49998834 0.23465971 0.61190009
+  0.36316597 0.69257497 0.29128473 0.29876706 0.83354281 0.43099002
+  0.75988446 0.88769182 0.60847764 0.09046981 0.46964621 0.96561774
+  0.01642587 0.64581266 0.11914597 0.51065092 0.7536191  0.80652156
+  0.11266719 0.0693507  0.47906196 0.32750124 0.35135743 0.29519507
+  0.35803202 0.29175071 0.20359245 0.63097347 0.54665845 0.65623496
+  0.52423017 0.17377933 0.83843531 0.88359366 0.04432902 0.63631363
+  0.46616969 0.52627893 0.81660062 0.02989648 0.07858949 0.30158849]]
+2022-11-03 02:23:30.776 | INFO     | routes.model_check:check_model:20 - Model: <class 'module'>
+2022-11-03 02:23:30.778 | INFO     | routes.model_check:check_model:22 - Prediction: [[13569962.450252]] [<class 'float'>]
