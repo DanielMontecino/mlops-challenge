@@ -14,3 +14,87 @@ docker-compose up airflow-init
 
 docker build -t ridge-api .
 docker run -d -p 80:80 -v $PWD/models:/app/models -v $PWD/logs:/app/logs --name ridge-api-container ridge-api
+
+
+Primero, vamos a verificar que los puertos 8080 y 80 no esten ocupados
+
+ss -ntl
+ss -ntl | grep 80
+ss -ntl | grep 8080
+ss -ntl | grep 6379
+ss -ntl | grep 5555
+ss -ntl | grep 8089
+luego, ejecutar
+bash init.sh
+Esperar a que termine
+iniciar sesion con
+user: airflow
+pass: airflow
+
+ir a http://localhost:8080/home
+ir a ml_pipeline
+ejecutar pipeline
+
+El pipeline se muestra a continuacion
+En primer lugar se realiza data extraction. Se creo un modulo para extraer data (get_data) que contiene 3 sub modulos
+que se ejecutan en paralelo, uno para cada uno de los sets (precipitaciones, banco_central y precio_leche).
+
+Si el proceso se realiza con exito se pasa al modulo de procesamiento, donde de procesan los 3 conjuntos y se generan los datasets
+de entrenamiento y test.
+
+Posteriormente se entrena el modelo usando la data de entrenamiento y se serializa en la carpeta models en formato .pk y .joblib.
+
+Finalmente se testea el modelo usando el dataset de test, el cual se evalua y genera metricas de RMSE y R2, aunque se podría
+incluir cualquier otra metrica que se desee. En un pipeline CI/CD, en esta etapa se deberia evaluar si el modelo cumple los requisitos
+para ponerse en produccion, y de ser el caso se gatilla la puesta en produccion del modelo. En este caso, este paso se hara de forma manual.
+
+Ademas de los logs que genera airflow en la carpeta pipeline/logs (dag_processor_manager, ml_pipeline y scheduler), se incluyó el
+archivo pipeline_logs, donde se guardan los logs custom del pipeline.
+
+
+Para poner en produccion el modelo (levantar API con endpoint de prediccion), se debe ejecutar el bash file init_app.sh
+
+bash init_app.sh
+
+y acceder a:
+
+http://127.0.0.1/docs
+
+curl -X 'POST' \
+  'http://127.0.0.1/ridge/predict' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "data": [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  ]
+}'
+
+los logs de la aplicacion se almacenan en app/logs/app_logs
+
+Para monitorear el modelo, se definió el metodo ridge/check. Este metodo genera datos aleatorios, realiza la inferencia del modelo
+y entrega tanto la data usada como la prediccion. Esto es solo un ejemplo de como se puede monitorear el desempeño,
+pero se puede modificar por data real con valores esperados.
+
+curl -X 'POST' \
+  'http://127.0.0.1/ridge/check' \
+  -H 'accept: application/json' \
+  -d ''
+
+Adicionalmente se pueden incluir alertas en el metodo ridge/predict para notificar si hay un data-drift, se realizan consultas con valores no permitidos, etc.
+
+La API fue construida con FastAPI, por lo que al acceder a 127.0.0.1/docs se pueden testear los metodos en una web-app.
+
+Por ejemplo, para probar el metodo predict
+
+Por ultimo, si se desea se puede hacer un load test sobre la aplicacion. solo se necesita instalar locust
+
+pip install locust
+
+y luego ejecutar
+
+ locust -f ./test/load_test.py
+
+ Al entrar a http://0.0.0.0:8089 se accede a la GUI de Locust, donde se debe ingresar la concurrencia maxima del test,
+ y la cantidad de usuarios por segundo.
+
