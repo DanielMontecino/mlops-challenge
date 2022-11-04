@@ -71,8 +71,8 @@ docker build -t airflow-custom .
 docker-compose up airflow-init
 docker-compose up
 ```
-Wait until the page ```http://localhost:8080/home``` run correctly. 
-To enter to the airflow page (```http://localhost:8080/home```), use the credentials:
+Wait until the page [http://localhost:8080/home](http://localhost:8080/home) run correctly. 
+To enter to the airflow page, use the credentials:
 
 ```
 user: airflow
@@ -126,4 +126,96 @@ cat pipeline/logs/pipeline_logs
 ```
 
 ## Model Deployment
+
+### Initialize App
+The only step to put the model into production is to run:
+
+```zh
+bash init_app.sh
+```
+This script just build the Docker image of the app and start a container with it.
+
+The container uses the volumes ```models``` and ```app/logs``` to load the model and write logs respectively.
+```zh
+#!/bin/bash
+
+docker build -t ridge-api app/
+docker run -d -p 80:80 -v $PWD/models:/app/models -v $PWD/app/logs:/app/logs --name ridge-api-container ridge-api
+```
+
+### API Predictions
+Then, an API is hosted locally, where prediction should be requested to ```http://127.0.0.1/ridge/predict```. 
+There are two ways of test the prediction of the model. The first is making a request through command line:
+
+```zh
+curl -X 'POST' \
+  'http://127.0.0.1/ridge/predict' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "data": [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  ]
+}'
+```
+
+The other is by the GUI of FastAPI: [http://127.0.0.1/docs](http://127.0.0.1/docs). Select the method ```ridge/predict```
+
+![Alt text](images/fastapi_1.png "Fast API")
+
+Select "Try it out"
+
+![Alt text](images/fastapi_2.png "Fast API")
+
+Then, you can change the data for perform the prediction test, and then press ```Execute```
+
+![Alt text](images/fastapi_3.png "Fast API")
+
+Results will be shown below:
+
+![Alt text](images/fastapi_4.png "Fast API")
+
+### Model Checks
+
+An additional method was made to test the model and check if it is still working as should in ```http://127.0.0.1/ridge/check```.
+When calling this method, random data is generated, is passed to the model, and the model perform a prediction over the data.
+The data and the prediction are sent as a response.
+
+Requests to this method can be done by:
+
+```zh
+curl -X 'POST' \
+  'http://127.0.0.1/ridge/check' \
+  -H 'accept: application/json' \
+  -d ''
+```
+
+Or by the FastAPI GUI, similar as the previous example:
+
+![Alt text](images/fastapi_5.png "Fast API")
+
+![Alt text](images/fastapi_6.png "Fast API")
+
+
+## Load Testing
+
+Optionally, you can perform a load test over the API.
+
+To do that, just run the command:
+```zh
+locust -f ./test/load_test.py
+```
+This will bring up a web application at [http://0.0.0.0:8089](http://0.0.0.0:8089).
+
+Upon entering, you access the Locust GUI, where you must enter the maximum concurrency of the test, and the number of users per second.
+For example, we are going to test with a concurrency of 500 and 50 users per second.
+
+![Alt text](images/locust_3.png "Locust")
+
+Then press "Start swarming" to start the test. Results will be shown as next
+
+
+![Alt text](images/locust_2.png "Locust")
+
+Where 11340 request were done with 4 requests failed (~0%), and the average response time was 10 ms.
 
