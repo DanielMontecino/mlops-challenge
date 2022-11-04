@@ -45,6 +45,7 @@ x-airflow-common:
     LANG: "es_ES.UTF-8"
     LANGUAGE: "es_ES:es"
     LC_ALL: "es_ES.UTF-8"
+    AIRFLOW__CORE__DAG_RUN_CONF_OVERRIDES_PARAMS: 'true'
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
@@ -53,11 +54,12 @@ x-airflow-common:
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-scikit-learn loguru}
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-scikit-learn loguru mlflow}
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
+    - ./mlruns:/opt/airflow/mlruns
     - ../data:/opt/airflow/data
     - ../models:/opt/airflow/models
   user: "${AIRFLOW_UID:-50000}:0"

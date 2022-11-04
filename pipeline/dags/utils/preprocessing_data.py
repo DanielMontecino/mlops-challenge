@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from loguru import logger
-from utils.config import PROCESSED_DATA_FOLDER, SPLIT_RANDOM_STATE, SPLIT_TEST_SIZE, RAW_DATA_FOLDER, \
+from utils.config import PROCESSED_DATA_FOLDER, RAW_DATA_FOLDER, \
     PRECIPITACIONES_CSV, BANCO_CENTRAL_CSV, PRECIO_LECHE_CSV
 
 os.environ['LANGUAGE'] = "es_ES.UTF-8"
@@ -14,8 +14,6 @@ import locale
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
 from sklearn.model_selection import train_test_split
-
-from utils.config import SEED
 
 
 def convert_int(x):
@@ -38,7 +36,7 @@ def to_100(x):  # mirando datos del bc, pib existe entre ~85-120 - igual esto es
             return float(x[0:2] + '.' + x[2:])
 
 
-def preprocessing_data():
+def preprocessing_data(**kwargs):
     precipitaciones_csv_path = os.path.join(RAW_DATA_FOLDER, PRECIPITACIONES_CSV)
     logger.info(f"Reading Precipitaciones from: {precipitaciones_csv_path}")
     precipitaciones = pd.read_csv(precipitaciones_csv_path)  # [mm]
@@ -120,10 +118,11 @@ def preprocessing_data():
 
     # generate random data-set
     logger.info(f"Split Dataset")
-    np.random.seed(SEED)
+    params = kwargs['params']
+    np.random.seed(params['seed'])
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=SPLIT_TEST_SIZE,
-                                                        random_state=SPLIT_RANDOM_STATE)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=params['split_test_size'],
+                                                        random_state=params['random_state'])
     logger.info(f"Train Examples: {len(X_train)}")
     logger.info(f"Test Examples: {len(X_test)}")
 

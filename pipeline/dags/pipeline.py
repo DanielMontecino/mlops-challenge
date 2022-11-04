@@ -8,7 +8,7 @@ from airflow.utils.task_group import TaskGroup
 from loguru import logger
 
 from utils.config import BANCO_CENTRAL_DATA_URL, PRECIPITACIONES_DATA_URL, PRECIO_LECHE_DATA_URL, RAW_DATA_FOLDER, \
-    BANCO_CENTRAL_CSV, PRECIPITACIONES_CSV, PRECIO_LECHE_CSV, ABS_PATH
+    BANCO_CENTRAL_CSV, PRECIPITACIONES_CSV, PRECIO_LECHE_CSV, ABS_PATH, EXP_CONFIG
 from utils.preprocessing_data import preprocessing_data
 from utils.test_model import test_model
 from utils.train_model import train_model
@@ -26,7 +26,8 @@ with DAG(
         "ml_pipeline",
         description='End-to-end ML',
         default_args=default_args,
-        catchup=False) as dag:
+        catchup=False,
+        params=EXP_CONFIG) as dag:
     # task 0
     with TaskGroup('get_data') as get_data:
         # =======
@@ -75,6 +76,7 @@ with DAG(
     # task: 2
     train = PythonOperator(
         task_id='train',
+        provide_context=True,
         python_callable=train_model
     )
 
