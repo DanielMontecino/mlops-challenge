@@ -66,7 +66,9 @@ To create necessary folders and initialize airflow, just run:
 bash init.sh
 ```
 
-If you are curious, this shell script creates some folders, sets an airflow environment variable, initializes airflow, and runs it.
+If you are curious, this shell script (showed below) creates some folders, sets an airflow environment variable, initializes airflow, and runs it.
+
+
 ```zh
 #!/bin/bash
 
@@ -151,9 +153,7 @@ The only step to put the model into production is to run the ```init_app.sh``` s
 ```zh
 bash init_app.sh
 ```
-This script builds the Docker image of the app and starts a container with it.
-
-The container uses the volumes ```models``` and ```app/logs``` to load the model and write logs, respectively.
+This script (showed below) builds the Docker image of the app and starts a container with it. The container uses the volumes ```models``` and ```app/logs``` to load the model and write logs, respectively.
 ```zh
 #!/bin/bash
 
