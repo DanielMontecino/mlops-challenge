@@ -1,43 +1,39 @@
 # MLOps Pipeline
 
 This repository contains a training pipeline of a regression model and an API for deploying the model into production.
-
 ## Requirements
 
-The only requirements to run the pipeline and the API is ```docker``` and ```docker-compose```.
-In addition, to perform a final load test you should install locust:
+The only requirements to run both, the pipeline and the API, are ```docker``` and ```docker-compose```. In addition, to perform a load testing you should install locust:
 
 ```zh
 pip3 install locust
 ```
 ## Overview
 
-The model training pipeline was build using ```airflow```. Airflow which is an open-source workflow management platform for data engineering pipelines. Airflow uses directed acyclic graphs (DAGs) to manage workflow orchestration. 
+The model training pipeline was build using ```airflow```. Airflow is an open-source workflow management platform for data engineering pipelines. Airflow uses directed acyclic graphs (DAGs) to manage workflow orchestration. 
 
 A containerised version of Airflow is used through docker-compose.
 
-
-The API that can take incoming predictions requests was build using ```FastAPI```, which is a Web framework for developing RESTful APIs in Python. This API was also build using Docker containers.
+The API that can take incoming prediction requests was built using ```FastAPI```, a Web framework for developing RESTful APIs in Python. This API was also built using Docker containers.
 
 ## Previous setup
 
 ### Clone the repository
 
-The first step is clone the repository and entry to its root folder
+The first step is to clone the repository and entry to its root folder
 ```zh
 git clone https://github.com/DanielMontecino/mlops-challenge
 cd mlops-challenge
 ```
 
 ### Verify ports
-FastApi uses the port 80 to receive request. Airflow uses ports 6379, 8080 and 5555, and locust uses port 8089. Therefore, the first step is to make sure that
-these port are unused.
+FastApi uses port 80 to receive requests. Airflow uses ports 6379, 8080, and 5555, and locust uses port 8089. Therefore, the first step is to make sure that these ports are not in use.
 
 Show all the used ports with the following command, and look for the mentioned ports.
 ```zh
 ss -ntl
 ```
-or look for each port with the next command (if there is no responde, ports are unused):
+or look for each port with the following command (if there is no responde, ports are unused):
 ```zh
 ss -ntl | grep 80
 ss -ntl | grep 8080
@@ -58,8 +54,7 @@ To create necessary folders and initialize airflow, just run:
 bash init.sh
 ```
 
-If you are curious, this shell script create some folders, set an airflow environment variable, initialize airflow and run it.
-
+If you are curious, this shell script creates some folders, sets an airflow environment variable, initializes airflow, and runs it.
 ```zh
 #!/bin/bash
 
@@ -71,15 +66,15 @@ docker build -t airflow-custom .
 docker-compose up airflow-init
 docker-compose up
 ```
-Wait until the page [http://localhost:8080/home](http://localhost:8080/home) run correctly. 
-To enter to the airflow page, use the credentials:
+Wait until the page [http://localhost:8080/home](http://localhost:8080/home) runs correctly. 
+To enter the airflow page, use the credentials:
 
 ```
 user: airflow
 pass: airflow
 ```
 
-Once inside, go to the ml_pipeline marked in a red bbox bellow.
+Once inside, go to the ml_pipeline marked in the red box below.
 
 ![Alt text](images/airflow_1.png "Airflow main page")
 
@@ -89,23 +84,20 @@ The pipeline is shown below
 
 ![Alt text](images/pipeline.png "pipeline")
 
-First, data extraction is performed. A module was created to extract data (get_data) that contains 3 sub modules
-that are executed in parallel, one for each of the sets (precipitaciones, banco_central and precio_leche).
-
-If the data extraction is successful, the processing module is triggered. Here, the 3 sets are processed, and the train and test datasets are generated.
+First, data extraction is performed. A module was created to extract data (get_data) and contains three sub-modules. These sub-modules are executed in parallel, one for each of the sets (precipitaciones, banco_central, and precio_leche).
+If the data extraction is successful, the processing module is triggered. Here, the three sets are processed, and the train and test datasets are generated.
 
 The model is then trained using the training data and serialized in the ```models``` folder in .pk and .joblib format.
 
-Finally, the model is tested using the test dataset. The evaluation generates RMSE and R2 metrics, although it could be
-included any other metrics you want. In a CI/CD pipeline, at this stage it should be evaluated whether the model meets the requirements
-to put into production, and if it is the case, trigger the model deployment. In this project, this step will be done manually.
+Finally, the model is tested using the test dataset. The evaluation generates RMSE and R2 metrics, although any other metric could be
+included. In a CI/CD pipeline, at this stage, it should be evaluated whether the model meets the requirements to put into production. If it is the case, trigger the model deployment. In this project, this step will be done manually.
 
 In addition to the logs generated by airflow in the ```pipeline/logs folder``` (```dag_processor_manager```, ```ml_pipeline``` and ```scheduler```), the
 ```pipeline/logs/pipeline_logs``` file is created, where custom pipeline logs are saved.
 
 ### Run Pipeline
 
-To run the pipeline, just press the play button marked in a red bbox in the next image.
+To run the pipeline, press the play button marked in a red box in the following image.
 
 ![Alt text](images/airflow_2.png "run ml_pipeline")
 
@@ -128,14 +120,14 @@ cat pipeline/logs/pipeline_logs
 ## Model Deployment
 
 ### Initialize App
-The only step to put the model into production is to run:
+The only step to put the model into production is to run the ```init_app.sh``` script:
 
 ```zh
 bash init_app.sh
 ```
-This script just build the Docker image of the app and start a container with it.
+This script builds the Docker image of the app and starts a container with it.
 
-The container uses the volumes ```models``` and ```app/logs``` to load the model and write logs respectively.
+The container uses the volumes ```models``` and ```app/logs``` to load the model and write logs, respectively.
 ```zh
 #!/bin/bash
 
@@ -145,7 +137,7 @@ docker run -d -p 80:80 -v $PWD/models:/app/models -v $PWD/app/logs:/app/logs --n
 
 ### API Predictions
 Then, an API is hosted locally, where prediction should be requested to ```http://127.0.0.1/ridge/predict```. 
-There are two ways of test the prediction of the model. The first is making a request through command line:
+There are two ways of testing the prediction of the model. The first is requesting through the command line:
 
 ```zh
 curl -X 'POST' \
@@ -167,22 +159,20 @@ Select "Try it out"
 
 ![Alt text](images/fastapi_2.png "Fast API")
 
-Then, you can change the data for perform the prediction test, and then press ```Execute```
+Then, you can change the data to perform the prediction test, and then press ```Execute```
 
 ![Alt text](images/fastapi_3.png "Fast API")
 
-Results will be shown below:
+The results will be shown below:
 
 ![Alt text](images/fastapi_4.png "Fast API")
 
-### Model Checks
+### Model Check
 
-An additional method was made to test the model and check if it is still working as should in ```http://127.0.0.1/ridge/check```.
-When calling this method, random data is generated, is passed to the model, and the model perform a prediction over the data.
+An additional method was made in ```http://127.0.0.1/ridge/check``` to test the model and check if it is still working as it should.When calling this method, random data is generated, is passed to the model, and the model perform a prediction over the data.
 The data and the prediction are sent as a response.
 
-Requests to this method can be done by:
-
+Requests to this method can be made by:
 ```zh
 curl -X 'POST' \
   'http://127.0.0.1/ridge/check' \
@@ -190,7 +180,7 @@ curl -X 'POST' \
   -d ''
 ```
 
-Or by the FastAPI GUI, similar as the previous example:
+Or by the FastAPI GUI, similar to the previous example:
 
 ![Alt text](images/fastapi_5.png "Fast API")
 
@@ -212,8 +202,9 @@ For example, we are going to test with a concurrency of 500 and 50 users per sec
 
 ![Alt text](images/locust_3.png "Locust")
 
-Then press "Start swarming" to start the test. Results will be shown as next
-
+Upon entering, you access the Locust GUI, where you must enter the maximum concurrency of users and the number of users per second.
+For example, we are going to test with a concurrency of 500 and 50 users per second.
+Then press "Start swarming" to start the test. Results will be shown next.
 
 ![Alt text](images/locust_2.png "Locust")
 
